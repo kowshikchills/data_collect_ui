@@ -108,7 +108,7 @@ if selected_menu == 'Home':
         df_add = pd.DataFrame([[heading, label]], columns=['Heading','Label'])
         df = pd.concat([df,df_add])
         df.to_csv(path_file, index=None)
-        #st.experimental_rerun()
+        st.experimental_rerun()
 
 if selected_menu == 'file':
     if exists(path_file):
