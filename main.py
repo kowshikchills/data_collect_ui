@@ -22,26 +22,20 @@ if selected_menu == 'Home':
     df_data = pd.read_pickle('data/data_tagging.pkl')
     if not exists(path_file):
         df = pd.DataFrame()
-        df['TrainId'] = []
+        df['Heading'] = []
         df['Label'] = []
         df.to_csv(path_file, index=None)
 
     df = pd.read_csv(path_file)
-    if len(df) == 0:
-        i = 0
+    if len(df) ==0:
+        df_data =  df_data
     else:
-        i = len(df)
+        df_data =  df_data[~df_data['headings'].isin(df.Heading.values)]
 
-    if len(df) > 2:
-        col1, col2, col3 = st.columns(3)
-        CLS = col1.button('Correct Last Sentence')
-        if CLS:
-            df_ = df[:-1]
-            df_.to_csv(path_file, index=None)
-            st.experimental_rerun()
-
-    heading = df_data['headings'].values[i]
-    tags = df_data['tags'][i]
+    #df_data = df_data.sample(len(df_data))
+    df_data_ = df_data.copy()
+    heading = df_data_['headings'].values[0]
+    tags = df_data_['tags'].values[0]
     tags_ = [x for x in tags if re.match("^[A-Za-z_-]*$", x)]
     tags_str = ', '.join(tags_)
     st.write('Sentence',)
@@ -111,10 +105,10 @@ if selected_menu == 'Home':
         label = 'None_of_above'
 
     if label != None:
-        df_add = pd.DataFrame([[i, label]], columns=['TrainId','Label'])
+        df_add = pd.DataFrame([[heading, label]], columns=['Heading','Label'])
         df = pd.concat([df,df_add])
         df.to_csv(path_file, index=None)
-        st.experimental_rerun()
+        #st.experimental_rerun()
 
 if selected_menu == 'file':
     if exists(path_file):
@@ -122,7 +116,6 @@ if selected_menu == 'file':
         df
         def convert_df(df):
             return df.to_csv().encode('utf-8')
-
         csv = convert_df(df)
 
         st.download_button(
